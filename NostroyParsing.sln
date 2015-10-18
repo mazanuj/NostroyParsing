@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostroyParsing", "NostroyParsing\NostroyParsing.csproj", "{1BA80F45-753F-4DF9-A3DD-5D6E5DF39F55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostroyParsingLib", "NostroyParsingLib\NostroyParsingLib.csproj", "{928E8DBB-9419-446B-8A71-16925B06CB9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{D6C61074-8DC5-4579-868A-5A4FC2359C2E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BA80F45-753F-4DF9-A3DD-5D6E5DF39F55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA80F45-753F-4DF9-A3DD-5D6E5DF39F55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA80F45-753F-4DF9-A3DD-5D6E5DF39F55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA80F45-753F-4DF9-A3DD-5D6E5DF39F55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{928E8DBB-9419-446B-8A71-16925B06CB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{928E8DBB-9419-446B-8A71-16925B06CB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{928E8DBB-9419-446B-8A71-16925B06CB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{928E8DBB-9419-446B-8A71-16925B06CB9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6C61074-8DC5-4579-868A-5A4FC2359C2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6C61074-8DC5-4579-868A-5A4FC2359C2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6C61074-8DC5-4579-868A-5A4FC2359C2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6C61074-8DC5-4579-868A-5A4FC2359C2E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
