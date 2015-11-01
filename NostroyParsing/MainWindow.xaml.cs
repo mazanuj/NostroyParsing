@@ -85,14 +85,23 @@ namespace NostroyParsing
         {
             await Task.Run(() =>
             {
-                var xssf = new XSSFWorkbook();
-                var sheet = xssf.CreateSheet();
-
-                AddRowsToXls(collection.Where(x => x != null), ref sheet);
-                using (var file = new FileStream(fileName, FileMode.Create))
+                try
                 {
-                    xssf.Write(file);
+                    var xssf = new XSSFWorkbook();
+                    var sheet = xssf.CreateSheet();
+
+                    AddRowsToXls(collection.Where(x => x != null), ref sheet);
+
+                    using (var file = new FileStream(fileName, FileMode.Create))
+                    {
+                        xssf.Write(file);
+                    }
                 }
+                catch (Exception)
+                {
+                    MessageBox.Show("Недостаточно оперативной памяти для обработки экспорта");
+                }
+
             });
         }
 
@@ -104,9 +113,14 @@ namespace NostroyParsing
             row.CreateCell(0).SetCellValue("СРО");
             row.CreateCell(1).SetCellValue("Сокращённое наименование");
             row.CreateCell(2).SetCellValue("ИНН");
-            row.CreateCell(3).SetCellValue("Номер контактного телефона");
-            row.CreateCell(4).SetCellValue("ФИО");
-            row.CreateCell(5).SetCellValue("Статус члена");
+            row.CreateCell(3).SetCellValue("Дата вступления");
+            row.CreateCell(4).SetCellValue("Дата исключения");
+            row.CreateCell(5).SetCellValue("Номер телефона");
+            row.CreateCell(6).SetCellValue("Старый номер телефона");
+            row.CreateCell(7).SetCellValue("Должность");
+            row.CreateCell(8).SetCellValue("ФИО");
+            row.CreateCell(9).SetCellValue("Статус члена");
+            row.CreateCell(10).SetCellValue("Адрес");
             rowIndex++;
 
             //Info
@@ -116,9 +130,14 @@ namespace NostroyParsing
                 row.CreateCell(0).SetCellValue(val.SRO);
                 row.CreateCell(1).SetCellValue(val.ShortName);
                 row.CreateCell(2).SetCellValue(val.INN);
-                row.CreateCell(3).SetCellValue(val.Phone);
-                row.CreateCell(4).SetCellValue(val.FIO);
-                row.CreateCell(5).SetCellValue(val.Status == Status.Member ? "Является членом" : "Исключен");
+                row.CreateCell(3).SetCellValue(val.RegDat);
+                row.CreateCell(4).SetCellValue(val.ExDate);
+                row.CreateCell(5).SetCellValue(val.Phone);
+                row.CreateCell(6).SetCellValue(val.OldPhone);
+                row.CreateCell(7).SetCellValue(val.Position);
+                row.CreateCell(8).SetCellValue(val.FIO);
+                row.CreateCell(9).SetCellValue(val.Status == Status.Member ? "Является членом" : "Исключен");
+                row.CreateCell(10).SetCellValue(val.Address);
                 rowIndex++;
             }
         }

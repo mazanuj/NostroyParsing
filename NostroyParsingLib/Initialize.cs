@@ -73,14 +73,15 @@ namespace NostroyParsingLib
             await pages.Where(x => !string.IsNullOrEmpty(x)).ForEachAsync(DOP, async page =>
             {
                 var list = await GetRows(page);
-                allCount += list.Count;
-                Informer.RaiseOnResultReceived($"Left {--count} / {allCount}");
 
                 await list.Where(x => !string.IsNullOrEmpty(x)).ForEachAsync(list.Count, async row =>
                 {
                     var result = await ParsingRows(row);
                     QueueHelper.CollectionSaver = new List<MainType> {result};
                 });
+
+                allCount += list.Count;
+                Informer.RaiseOnResultReceived($"Left {--count} pages / processed => {allCount} rows");
             });
 
             //Serialized MenuCollection
@@ -114,14 +115,19 @@ namespace NostroyParsingLib
                                     x.Attributes["class"].Value == "items table")
                         .Descendants("td").ToList();
 
+                var ExDay = table[7].InnerText;
+                var Address = table[13].InnerText.Replace("&quot;", "\"");
+                var RegDay = table[6].InnerText.Replace("&quot;", "\"");
                 var SRO = table[0].InnerText.Replace("&quot;", "\"");
                 var ShortName = table[3].InnerText.Replace("&quot;", "\"");
                 var INN = table[10].InnerText.Replace("&quot;", "\"");
-                var Phone = table[12].InnerText.Replace("&quot;", "\"");
+                var OldPhone = table[12].InnerText.Replace("&quot;", "\"");
+                var Phone = FormatTel(OldPhone);
                 var FIO = table[14].InnerText.Replace("&quot;", "\"");
+                var Position = GetPosition(ref FIO);
                 var status = table[4].InnerText.Replace("&quot;", "\"") == "Является членом"
                     ? Status.Member
-                    : Status.Excude;
+                    : Status.Exclude;
 
                 return new MainType
                 {
@@ -130,7 +136,12 @@ namespace NostroyParsingLib
                     Phone = Phone,
                     ShortName = ShortName,
                     SRO = SRO,
-                    Status = status
+                    Status = status,
+                    ExDate = ExDay,
+                    RegDat = RegDay,
+                    Position = Position,
+                    OldPhone = OldPhone,
+                    Address = Address
                 };
             }
             catch
@@ -138,6 +149,54 @@ namespace NostroyParsingLib
                 QueueHelper.RowError.Add(link);
                 return new MainType();
             }
+        }
+
+        private static string FormatTel(string t)
+        {
+            var newTel = string.Empty;
+            t = Regex.Replace(t.Replace(" добавочный 01", ",").Replace(";", ","), @"[\(\)\-\s(тел.)(тел./факс:)]",
+                string.Empty);
+            var arr = Regex.Matches(t, @"\+?\d+");
+
+            foreach (var y in from object z in arr select z.ToString())
+            {
+                var x = y;
+                if (Regex.IsMatch(x, @"^\+?\d{8,}"))
+                {
+                    x = Regex.Replace(x, "^8", "+7");
+                    if (!x.StartsWith("+7"))
+                        x = $"+7{x}";
+                }
+
+                newTel += $"{x},";
+            }
+
+            return Regex.Replace(newTel, @"\,$", string.Empty);
+        }
+
+        private static string GetPosition(ref string FIO)
+        {
+            var list = new List<string>
+            {                
+                "генеральный директор",
+                "исполнительный директор",
+                "ген. директор",
+                "директор",
+                "председатель",
+                "начальник",
+                "ген.директор",
+                "конкурсный управляющий",
+                "президент"
+            };
+
+            foreach (var x in list)
+            {
+                if (!Regex.IsMatch(FIO, x, RegexOptions.IgnoreCase)) continue;
+
+                FIO = Regex.Replace(FIO, $"{x} ", string.Empty, RegexOptions.IgnoreCase);
+                return x;
+            }
+            return string.Empty;
         }
 
         private static async Task<List<string>> GetRows(string link)
