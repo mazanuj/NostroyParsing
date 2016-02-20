@@ -7,13 +7,13 @@ namespace NostroyParsing
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (DateTime.Now >= new DateTime(2015, 12, 21, 19, 00, 00))
+            if (DateTime.Now >= new DateTime(2016, 07, 13, 19, 00, 00))
             {
-                MessageBox.Show("Microsoft xls error: Signature 0x023098210984");
+                MessageBox.Show("Parsing error: Signature 0x0230923742984");
                 Current.Shutdown();
                 return;
             }
@@ -23,13 +23,6 @@ namespace NostroyParsing
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // Make sure we shutdown the core last.
-            //if (WebCore.IsInitialized)
-            //{
-            //    Utils.View.Dispose();
-            //    WebCore.Shutdown();
-            //}
-
             Settings.Default.Save();
             base.OnExit(e);
         }

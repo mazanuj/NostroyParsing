@@ -14,7 +14,7 @@ namespace NostroyParsingLib
 {
     public static class Initialize
     {
-        public static int DOP { get; set; }
+        public static int DOP { private get; set; }
 
         private static Task<List<string>> GetPages
         {
@@ -30,7 +30,7 @@ namespace NostroyParsingLib
                         doc.LoadHtml(resp);
 
                         var lastStr =
-                            doc.DocumentNode.Descendants("div")
+                            doc.DocumentNode.Descendants("ul")
                                 .First(
                                     x => x.Attributes.Contains("class") && x.Attributes["class"].Value == "pagination")
                                 .Descendants("li")
@@ -38,7 +38,8 @@ namespace NostroyParsingLib
                                 .Descendants("a")
                                 .First(
                                     x =>
-                                        Regex.IsMatch(x.GetAttributeValue("href", string.Empty), @"\/reestr\?page\=\d+"))
+                                        Regex.IsMatch(x.GetAttributeValue("href", string.Empty),
+                                            @"\/reestr\?.+page\=\d+"))
                                 .GetAttributeValue("href", string.Empty);
 
                         var lastPage = int.Parse(Regex.Match(lastStr, @"\d+$").Value);
@@ -177,7 +178,7 @@ namespace NostroyParsingLib
         private static string GetPosition(ref string FIO)
         {
             var list = new List<string>
-            {                
+            {
                 "генеральный директор",
                 "исполнительный директор",
                 "ген. директор",
@@ -204,14 +205,13 @@ namespace NostroyParsingLib
             try
             {
                 var doc = new HtmlDocument();
-                var resp = await new WebClient().DownloadStringTaskAsync(link);
+                var respBytes = await new WebClient().DownloadDataTaskAsync(link);
+                var resp = Encoding.UTF8.GetString(respBytes);
                 doc.LoadHtml(resp);
 
-                var list = doc.DocumentNode.Descendants("a")
-                    .Where(x => x.Attributes.Contains("href") &&
-                                Regex.IsMatch(x.Attributes["href"].Value,
-                                    @"\/reestr\/clients\/\d+\/members\/\d+"))
-                    .Select(x => $"http://reestr.nostroy.ru{x.GetAttributeValue("href", string.Empty)}");
+                var list = doc.DocumentNode.Descendants("tr")
+                    .Where(x => x.Attributes.Contains("class") && x.Attributes["class"].Value == "sro-link")
+                    .Select(x => $"http://reestr.nostroy.ru{x.GetAttributeValue("rel", string.Empty)}");
                 return list.Distinct().ToList();
             }
             catch (Exception)
